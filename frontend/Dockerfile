@@ -1,10 +1,4 @@
 FROM node:alpine as build
-
-COPY . .
-RUN npx expo install --fix
-
-RUN npx expo export --platform web
-
 FROM nginx:stable-alpine
 
 COPY --from=build /dist /usr/share/nginx/html
