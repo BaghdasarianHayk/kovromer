@@ -1,7 +1,14 @@
-FROM node:alpine as build
+# Use the stable Nginx image for serving static files
 FROM nginx:stable-alpine
 
-COPY --from=build /dist /usr/share/nginx/html
-COPY --from=build nginx.conf /etc/nginx/conf.d/default.conf
-EXPOSE 3000
-CMD [ "nginx", "-g", "daemon off;" ]
+# Copy the pre-built dist directory to Nginx's web root directory
+COPY ./dist /usr/share/nginx/html
+
+# Copy the custom nginx.conf configuration file into the container
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Expose port 80 (default for Nginx)
+EXPOSE 80
+
+# Start nginx in the foreground
+CMD ["nginx", "-g", "daemon off;"]
