@@ -1,8 +1,8 @@
-FROM python:3
+FROM python:3.12.7-slim
 
-RUN pip3 install --upgrade pip
-RUN pip3 install sqlalchemy
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
 
-COPY . . 
+COPY . .
 
 CMD [ "python", "main.py" ]
