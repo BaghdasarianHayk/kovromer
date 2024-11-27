@@ -1,7 +1,7 @@
 FROM python:3
 
 RUN pip3 install --upgrade pip
-RUN pip3 install -i https://mirrors.sustech.edu.cn/pypi/web/simple "sqlalchemy[asyncio]"
+RUN pip3 install sqlalchemy
 
 COPY . . 
 
