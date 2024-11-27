@@ -7,8 +7,7 @@ COPY ./dist /usr/share/nginx/html
 # Copy the custom nginx.conf configuration file into the container
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Expose port 80 (default for Nginx)
-EXPOSE 80
+EXPOSE 3000
 
 # Start nginx in the foreground
 CMD ["nginx", "-g", "daemon off;"]
