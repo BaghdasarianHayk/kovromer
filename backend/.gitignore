@@ -1,0 +1,68 @@
+# Byte-compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Virtual environment
+venv/
+env/
+.virtualenv/
+
+# Environment variables and configuration
+# .env
+# *.env
+# *.env.*
+
+# Pytest cache and coverage reports
+.pytest_cache/
+.coverage
+.coverage.*
+.cache/
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+*.pot
+
+# SQLAlchemy and SQLite
+*.db
+*.sqlite3
+
+# Static files
+staticfiles/
+media/
+
+# VS Code files
+.vscode/
+
+# PyCharm files
+.idea/
+
+# macOS files
+.DS_Store
+
+# Windows files
+Thumbs.db
+desktop.ini
+
+# Docker
+docker-compose.override.yml
+.dockerignore
+
+# Logs
+*.log
+
+# Migrations
+migrations/
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+
+# Celery beat schedule file
+celerybeat-schedule
+
+# Local .gitignore overrides
+!*.gitignore
