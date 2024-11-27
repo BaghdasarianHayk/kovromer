@@ -1,10 +1,7 @@
 FROM node:alpine as build
 
-COPY package.json package.json
-
-RUN npx expo install
-
 COPY . .
+RUN npx expo install --fix
 
 RUN npx expo export --platform web
 
