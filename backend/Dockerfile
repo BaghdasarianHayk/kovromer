@@ -1,6 +1,6 @@
 FROM python:3.12.7
 
-RUN pip install sqlalchemy[asyncio]
+RUN pip3 install sqlalchemy[asyncio]
 
 COPY . . 
 
