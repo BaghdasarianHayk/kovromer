@@ -1,124 +1,69 @@
-import { CameraView, useCameraPermissions, CameraType } from 'expo-camera';
-import { useState, useEffect, useRef } from 'react';
-import { Button, Text, View, SafeAreaView } from 'react-native';
-import MainButton from '../../components/MainButton';
-import { useAuth } from '../../context/AuthContext';
-import { router, useLocalSearchParams } from 'expo-router';
-import ProtectedRoute from '../../components/ProtectedRoute';
+import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
+import { useState } from 'react';
+import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-export default function Cameras() {
+export default function App() {
   const [facing, setFacing] = useState<CameraType>('back');
   const [permission, requestPermission] = useCameraPermissions();
-  const [isStreaming, setIsStreaming] = useState(false);
-  const cameraRef = useRef(null);
-  const ws = useRef(null);
-  const frameInterval = useRef(null);
-  const { currentToken } = useAuth();
-  const { id } = useLocalSearchParams()
-
-  useEffect(() => {
-    requestPermission();
-
-    return () => {
-      if (frameInterval.current) {
-        clearInterval(frameInterval.current);
-      }
-      if (ws.current) {
-        ws.current.close();
-      }
-    };
-  }, []);
 
   if (!permission) {
+    // Camera permissions are still loading.
     return <View />;
   }
 
   if (!permission.granted) {
+    // Camera permissions are not granted yet.
     return (
-      <View style={{flex: 1, backgroundColor: 'white'}}>
-        <Text>We need your permission to show the camera</Text>
+      <View style={styles.container}>
+        <Text style={styles.message}>We need your permission to show the camera</Text>
         <Button onPress={requestPermission} title="grant permission" />
       </View>
     );
   }
 
   function toggleCameraFacing() {
-    setFacing((current) => (current === 'back' ? 'front' : 'back'));
+    setFacing(current => (current === 'back' ? 'front' : 'back'));
   }
 
-  const startStreaming = async () => {
-    if (!ws.current || ws.current.readyState !== WebSocket.OPEN) {
-
-      ws.current = new WebSocket(`wss://ковромер.рф/api/cameras/${id}/ws?token=${encodeURIComponent(currentToken)}`);
-
-      ws.current.onopen = () => {
-        console.log('WebSocket connected');
-        setIsStreaming(true);
-        captureAndSendFrames();
-      };
-
-      ws.current.onclose = () => {
-        console.log('WebSocket closed');
-        setIsStreaming(false);
-      };
-
-      ws.current.onerror = (error) => {
-        console.error('WebSocket error:', error);
-      };
-    }
-  };
-
-  const stopStreaming = () => {
-    if (ws.current) {
-      ws.current.close();
-    }
-    setIsStreaming(false);
-
-    if (frameInterval.current) {
-      clearInterval(frameInterval.current); // Clear the interval
-      frameInterval.current = null; // Reset the interval reference
-    }
-    router.replace('cameras')
-  };
-
-  const captureAndSendFrames = async () => {
-    if (cameraRef.current) {
-      frameInterval.current = setInterval(async () => {
-        const photo = await cameraRef.current.takePictureAsync({
-          base64: true,
-          quality: 0.4,
-          exif: false,
-          fastMode: true,
-          scale: 0.4
-        });
-
-        if (ws.current && ws.current.readyState === WebSocket.OPEN) {
-          ws.current.send(photo.base64);
-        }
-      }, 100);
-    }
-  };
-
   return (
-    <ProtectedRoute>
-      <View style={{flex: 1, backgroundColor: 'white', width: '100%', height: '100%'}}>
-        <SafeAreaView style={{flex: 1, width: '100%', height: '100%'}}>
-          <CameraView
-            facing={facing}
-            style={{flex: 1}}
-            ref={cameraRef}
-          >
-
-          <View style={{position: 'absolute', bottom: 20, alignItems: 'center', width: '100%'}}>
-            {isStreaming ? (
-              <MainButton defaultWidth={320} type="danger" text="Прекратить трансляцию" onPress={stopStreaming} />
-            ) : (
-              <MainButton defaultWidth={320} type="standard" text="Начать трансляцию" onPress={startStreaming} />
-            )}
-          </View>
-          </CameraView>
-        </SafeAreaView>
-      </View>
-    </ProtectedRoute>
+    <View style={styles.container}>
+      <CameraView style={styles.camera} facing={facing}>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
+            <Text style={styles.text}>Flip Camera</Text>
+          </TouchableOpacity>
+        </View>
+      </CameraView>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  message: {
+    textAlign: 'center',
+    paddingBottom: 10,
+  },
+  camera: {
+    flex: 1,
+  },
+  buttonContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    backgroundColor: 'transparent',
+    margin: 64,
+  },
+  button: {
+    flex: 1,
+    alignSelf: 'flex-end',
+    alignItems: 'center',
+  },
+  text: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+});
