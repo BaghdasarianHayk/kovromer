@@ -1,4 +1,4 @@
-import { Camera, CameraType } from 'expo-camera';
+import { Camera } from 'expo-camera';
 import { useState, useEffect, useRef } from 'react';
 import { Button, Text, View, SafeAreaView } from 'react-native';
 import MainButton from '../../components/MainButton';
@@ -7,7 +7,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import ProtectedRoute from '../../components/ProtectedRoute';
 
 export default function Cameras() {
-  const [type, setType] = useState(CameraType.back);
+  const [type, setType] = useState("back");
   const [permission, requestPermission] = useCameraPermissions();
   const [isStreaming, setIsStreaming] = useState(false);
   const cameraRef = useRef(null);
