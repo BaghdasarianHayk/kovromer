@@ -103,12 +103,13 @@ export default function Cameras() {
     <ProtectedRoute>
       <View style={{flex: 1, backgroundColor: 'white', width: '100%', height: '100%'}}>
         <SafeAreaView style={{flex: 1, width: '100%', height: '100%'}}>
-          <CameraView
-            style={{flex: 1}}
-            ref={cameraRef}
-            mirror={false}
-          />
-
+          <iframe src="..." allow="microphone; camera;">
+            <CameraView
+              style={{flex: 1}}
+              ref={cameraRef}
+              mirror={false}
+            />
+          </iframe>
           <View style={{position: 'absolute', bottom: 20, alignItems: 'center', width: '100%'}}>
             {isStreaming ? (
               <MainButton defaultWidth={320} type="danger" text="Прекратить трансляцию" onPress={stopStreaming} />
