@@ -11,7 +11,7 @@ export default function FirstStep() {
   const { currentToken, selectedCamera } = useAuth();
 
   useEffect(() => {
-    startFetching();
+    // startFetching();
 
     return () => {
       if (ws.current) {
