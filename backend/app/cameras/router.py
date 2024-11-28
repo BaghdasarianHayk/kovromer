@@ -4,7 +4,9 @@ from app.cameras.schemas import CameraCreate, CameraBase, CameraCalibrate
 from app.database import AsyncSession
 from fastapi import APIRouter, HTTPException
 from starlette import status
-from app.workers.router import current_worker
+from app.workers.router import current_worker, get_current_worker
+from collections import defaultdict
+from fastapi import WebSocket, WebSocketDisconnect
 
 router = APIRouter(
     prefix="/cameras",
@@ -80,3 +82,68 @@ async def calibrate_camera( worker: current_worker, data: CameraCalibrate, camer
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Произошла непредвиденная ошибка. Повторите попытку позже. {str(e)}"
         )
+    
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: defaultdict[int, list[WebSocket]] = defaultdict(list)
+
+    async def connect(self, websocket: WebSocket, camera_id: int):
+        await websocket.accept()
+        self.active_connections[camera_id].append(websocket)
+
+    def disconnect(self, websocket: WebSocket, camera_id: int):
+        if camera_id in self.active_connections:
+            self.active_connections[camera_id].remove(websocket)
+            if not self.active_connections[camera_id]:  # Remove empty list
+                del self.active_connections[camera_id]
+
+    async def broadcast(self, message: str, camera_id: int):
+        if camera_id in self.active_connections:
+            for connection in self.active_connections[camera_id]:
+                await connection.send_text(message)
+
+manager = ConnectionManager()
+
+@router.websocket("/{camera_id}/ws")
+async def websocket_endpoint(websocket: WebSocket, token: str, camera_id: int):
+    try:
+        worker = await get_current_worker(token)
+        if not worker or 'id' not in worker:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired token.")
+
+        worker_id = worker['id']
+
+        async with AsyncSession() as session:
+            if camera_id == 0:
+                result = await session.execute(
+                    select(Camera).order_by(Camera.id.asc()).limit(1)
+                )
+            else:
+                result = await session.execute(
+                    select(Camera).where(Camera.id == camera_id)
+                )
+            camera = result.scalars().first()
+
+            if not camera:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                                    detail=f"Camera with id: {camera_id} doesn't exist!")
+
+        await manager.connect(websocket, camera_id)
+
+        try:
+            while True:
+                data = await websocket.receive_text()
+
+                if worker_id == camera.worker_id:
+                    await manager.broadcast(data, camera_id)
+                else:
+                    print(f"Unauthorized send attempt by user ID: {worker_id}")
+        except WebSocketDisconnect:
+            manager.disconnect(websocket, camera_id)
+        except Exception as e:
+            print(f"Unexpected error: {e}")
+            manager.disconnect(websocket, camera_id)
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="An error occurred.")
+    except HTTPException as e:
+        await websocket.close(code=e.status_code)
+        raise e

@@ -45,8 +45,8 @@ export default function Cameras() {
         }
       );
   
-      if (response.data?.cameras?.length > 0) {
-        setCameras(response.data.cameras);
+      if (response.data?.length > 0) {
+        setCameras(response.data);
       }
     } catch (error) {
       alert('Error fetching cameras:', error);
