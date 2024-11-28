@@ -59,10 +59,10 @@ export const AuthProvider = ({ children }) => {
         }
       );
 
-      if(response.data.worker){
-        console.log(response.data.worker)
+      if(response.data.id){
+        console.log(response.data)
         await AsyncStorage.setItem('token', token)
-        setCurrentWorker(response.data.worker)
+        setCurrentWorker(response.data)
         setCurrentToken(token)
         router.replace('/(drawer)/first_step')
       }
