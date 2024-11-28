@@ -1,4 +1,4 @@
-import { CameraView, useCameraPermissions } from 'expo-camera';
+import { CameraView, useCameraPermissions, CameraType } from 'expo-camera';
 import { useState, useEffect, useRef } from 'react';
 import { Button, Text, View, SafeAreaView } from 'react-native';
 import MainButton from '../../components/MainButton';
@@ -7,7 +7,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import ProtectedRoute from '../../components/ProtectedRoute';
 
 export default function Cameras() {
-  const [facing, setFacing] = useState('back');
+  const [facing, setFacing] = useState<CameraType>('back');
   const [permission, requestPermission] = useCameraPermissions();
   const [isStreaming, setIsStreaming] = useState(false);
   const cameraRef = useRef(null);
@@ -107,8 +107,7 @@ export default function Cameras() {
             facing={facing}
             style={{flex: 1}}
             ref={cameraRef}
-            mirror={false}
-          />
+          >
 
           <View style={{position: 'absolute', bottom: 20, alignItems: 'center', width: '100%'}}>
             {isStreaming ? (
@@ -117,6 +116,7 @@ export default function Cameras() {
               <MainButton defaultWidth={320} type="standard" text="Начать трансляцию" onPress={startStreaming} />
             )}
           </View>
+          </CameraView>
         </SafeAreaView>
       </View>
     </ProtectedRoute>
