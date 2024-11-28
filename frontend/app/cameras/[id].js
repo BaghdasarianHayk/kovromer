@@ -1,4 +1,4 @@
-import { Camera } from 'expo-camera';
+import { Camera, useCameraPermissions } from 'expo-camera';
 import { useState, useEffect, useRef } from 'react';
 import { Button, Text, View, SafeAreaView } from 'react-native';
 import MainButton from '../../components/MainButton';
@@ -100,7 +100,7 @@ export default function Cameras() {
       <View style={{flex: 1, backgroundColor: 'white', width: '100%', height: '100%'}}>
         <SafeAreaView style={{flex: 1, width: '100%', height: '100%'}}>
 
-          <Camera ref={cameraRef} style={styles.camera} type={type} />
+          <Camera ref={cameraRef} style={{flex: 1, width: '100%', height: '100%'}} type={type} />
 
 
           <View style={{position: 'absolute', bottom: 20, alignItems: 'center', width: '100%'}}>
