@@ -29,7 +29,7 @@ export default function FirstStep() {
     }
 
     ws.current = new WebSocket(
-      `ws://ковромер.рф/api/cameras/${selectedCamera?.id || 0}/ws?token=${encodeURIComponent(currentToken)}`
+      `wss://ковромер.рф/api/cameras/${selectedCamera?.id || 0}/ws?token=${encodeURIComponent(currentToken)}`
     );
 
     ws.current.onopen = () => {

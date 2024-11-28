@@ -49,7 +49,7 @@ export default function Cameras() {
   const startStreaming = async () => {
     if (!ws.current || ws.current.readyState !== WebSocket.OPEN) {
 
-      ws.current = new WebSocket(`ws://ковромер.рф/api/cameras/${id}/ws?token=${encodeURIComponent(currentToken)}`);
+      ws.current = new WebSocket(`wss://ковромер.рф/api/cameras/${id}/ws?token=${encodeURIComponent(currentToken)}`);
 
       ws.current.onopen = () => {
         console.log('WebSocket connected');
