@@ -1,4 +1,4 @@
-import { CameraView, useCameraPermissions } from 'expo-camera';
+import { Camera, CameraType } from 'expo-camera';
 import { useState, useEffect, useRef } from 'react';
 import { Button, Text, View, SafeAreaView } from 'react-native';
 import MainButton from '../../components/MainButton';
@@ -7,7 +7,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import ProtectedRoute from '../../components/ProtectedRoute';
 
 export default function Cameras() {
-  const [facing, setFacing] = useState('back');
+  const [type, setType] = useState(CameraType.back);
   const [permission, requestPermission] = useCameraPermissions();
   const [isStreaming, setIsStreaming] = useState(false);
   const cameraRef = useRef(null);
@@ -40,10 +40,6 @@ export default function Cameras() {
         <Button onPress={requestPermission} title="grant permission" />
       </View>
     );
-  }
-
-  function toggleCameraFacing() {
-    setFacing((current) => (current === 'back' ? 'front' : 'back'));
   }
 
   const startStreaming = async () => {
@@ -103,13 +99,10 @@ export default function Cameras() {
     <ProtectedRoute>
       <View style={{flex: 1, backgroundColor: 'white', width: '100%', height: '100%'}}>
         <SafeAreaView style={{flex: 1, width: '100%', height: '100%'}}>
-          <iframe src="..." allow="microphone; camera;">
-            <CameraView
-              style={{flex: 1}}
-              ref={cameraRef}
-              mirror={false}
-            />
-          </iframe>
+
+          <Camera ref={cameraRef} style={styles.camera} type={type} />
+
+
           <View style={{position: 'absolute', bottom: 20, alignItems: 'center', width: '100%'}}>
             {isStreaming ? (
               <MainButton defaultWidth={320} type="danger" text="Прекратить трансляцию" onPress={stopStreaming} />
