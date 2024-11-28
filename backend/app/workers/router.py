@@ -75,12 +75,12 @@ current_worker = Annotated[Worker, Depends(get_current_worker)]
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=WorkerBase)
-async def add_worker( worker: current_worker, create_worker_request: WorkerCreate):
-    if not worker.permissions.get("add_worker"):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Вам необходимо разрешение на выполнение этой операции.",
-        )
+async def add_worker( create_worker_request: WorkerCreate):
+    # if not worker.permissions.get("add_worker"):
+    #     raise HTTPException(
+    #         status_code=status.HTTP_403_FORBIDDEN,
+    #         detail="Вам необходимо разрешение на выполнение этой операции.",
+    #     )
 
     hashed_password = bcrypt_context.hash(create_worker_request.password)
     create_worker_model = Worker(
