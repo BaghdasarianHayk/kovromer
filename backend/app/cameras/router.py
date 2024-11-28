@@ -1,3 +1,5 @@
+from typing import List
+
 from sqlalchemy.future import select
 from app.cameras.models import Camera
 from app.cameras.schemas import CameraCreate, CameraBase, CameraCalibrate
@@ -39,13 +41,13 @@ async def add_camera( worker: current_worker, create_storage_request: CameraCrea
             detail=f"Произошла непредвиденная ошибка. Повторите попытку позже. {str(e)}"
         )
 
-@router.get("/", status_code=status.HTTP_200_OK)
+@router.get("/", status_code=status.HTTP_200_OK, response_model=List[CameraBase])
 async def get_cameras( worker: current_worker ):
     try:
         async with AsyncSession() as session:
             result = await session.execute(select(Camera))
-            storages = result.scalars().all()
-            return storages
+            cameras = result.scalars().all()
+            return cameras
 
     except Exception as e:
         raise HTTPException(
@@ -108,10 +110,10 @@ manager = ConnectionManager()
 async def websocket_endpoint(websocket: WebSocket, token: str, camera_id: int):
     try:
         worker = await get_current_worker(token)
-        if not worker or 'id' not in worker:
+        if not worker or worker.id:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired token.")
 
-        worker_id = worker['id']
+        worker_id = worker.id
 
         async with AsyncSession() as session:
             if camera_id == 0:
