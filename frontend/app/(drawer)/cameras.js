@@ -45,7 +45,7 @@ export default function Cameras() {
         }
       );
   
-      if (response.data?.length > 0) {
+      if (!response.data?.detail) {
         setCameras(response.data);
       }
     } catch (error) {

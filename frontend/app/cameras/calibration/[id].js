@@ -18,7 +18,7 @@ export default function FirstStep() {
 
   const startFetching = () => {
     if (!ws.current || ws.current.readyState !== WebSocket.OPEN) {
-      ws.current = new WebSocket(`wss://ковромер.рф/api/cameras/${selectedCamera.id}/ws?token=${encodeURIComponent(currentToken)}`); // Use server IP
+      ws.current = new WebSocket(`ws://ковромер.рф/api/cameras/${selectedCamera.id}/ws?token=${encodeURIComponent(currentToken)}`); // Use server IP
 
       ws.current.onopen = () => {
         console.log('WebSocket connected');

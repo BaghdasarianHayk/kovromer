@@ -11,7 +11,7 @@ export default function FirstStep() {
   const { currentToken, selectedCamera } = useAuth();
 
   useEffect(() => {
-    // startFetching();
+    startFetching();
 
     return () => {
       if (ws.current) {
@@ -29,7 +29,7 @@ export default function FirstStep() {
     }
 
     ws.current = new WebSocket(
-      `wss://ковромер.рф/api/cameras/${selectedCamera?.id || 0}/ws?token=${encodeURIComponent(currentToken)}`
+      `ws://ковромер.рф/api/cameras/${selectedCamera?.id || 0}/ws?token=${encodeURIComponent(currentToken)}`
     );
 
     ws.current.onopen = () => {
