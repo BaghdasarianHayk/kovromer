@@ -110,7 +110,7 @@ manager = ConnectionManager()
 async def websocket_endpoint(websocket: WebSocket, token: str, camera_id: int):
     try:
         worker = await get_current_worker(token)
-        if not worker or worker.id:
+        if not worker or not worker.id:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired token.")
 
         worker_id = worker.id
