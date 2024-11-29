@@ -50,6 +50,9 @@ export default function Cameras() {
         base64_image: base64Image
       });
       console.log(response.data);  // Handle the response from the API
+      if(response.data){
+        setDotPositions(response.data)
+      }
     } catch (error) {
       console.error("Error detecting carpet:", error);
     }

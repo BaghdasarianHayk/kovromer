@@ -1,5 +1,5 @@
-import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
-import { useState, useRef, useEffect } from 'react';
+import { CameraView, useCameraPermissions } from 'expo-camera';
+import { useState, useEffect, useRef } from 'react';
 import { Button, Text, View, SafeAreaView } from 'react-native';
 import MainButton from '../../components/MainButton';
 import { useAuth } from '../../context/AuthContext';
@@ -7,7 +7,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import ProtectedRoute from '../../components/ProtectedRoute';
 
 export default function Cameras() {
-  const [facing, setFacing] = useState<CameraType>('back');
+  const [facing, setFacing] = useState('back');
   const [permission, requestPermission] = useCameraPermissions();
   const [isStreaming, setIsStreaming] = useState(false);
   const cameraRef = useRef(null);
@@ -17,6 +17,8 @@ export default function Cameras() {
   const { id } = useLocalSearchParams()
 
   useEffect(() => {
+    requestPermission();
+
     return () => {
       if (frameInterval.current) {
         clearInterval(frameInterval.current);
@@ -26,6 +28,23 @@ export default function Cameras() {
       }
     };
   }, []);
+
+  if (!permission) {
+    return <View />;
+  }
+
+  if (!permission.granted) {
+    return (
+      <View style={{flex: 1, backgroundColor: 'white'}}>
+        <Text>We need your permission to show the camera</Text>
+        <Button onPress={requestPermission} title="grant permission" />
+      </View>
+    );
+  }
+
+  function toggleCameraFacing() {
+    setFacing((current) => (current === 'back' ? 'front' : 'back'));
+  }
 
   const startStreaming = async () => {
     if (!ws.current || ws.current.readyState !== WebSocket.OPEN) {
@@ -59,7 +78,7 @@ export default function Cameras() {
       clearInterval(frameInterval.current); // Clear the interval
       frameInterval.current = null; // Reset the interval reference
     }
-    router.replace('/cameras')
+    router.replace('cameras')
   };
 
   const captureAndSendFrames = async () => {
@@ -80,32 +99,23 @@ export default function Cameras() {
     }
   };
 
-  if (!permission) {
-    return <View />;
-  }
-
-  if (!permission.granted) {
-    return (
-      <View>
-        <Text>We need your permission to show the camera</Text>
-        <Button onPress={requestPermission} title="grant permission" />
-      </View>
-    );
-  }
-
   return (
     <ProtectedRoute>
       <View style={{flex: 1, backgroundColor: 'white', width: '100%', height: '100%'}}>
         <SafeAreaView style={{flex: 1, width: '100%', height: '100%'}}>
-            <CameraView style={{flex: 1}} ref={cameraRef} facing={facing}>
-              <View style={{position: 'absolute', bottom: 20, alignItems: 'center', width: '100%'}}>
-                {isStreaming ? (
-                  <MainButton defaultWidth={320} type="danger" text="Прекратить трансляцию" onPress={stopStreaming} />
-                ) : (
-                  <MainButton defaultWidth={320} type="standard" text="Начать трансляцию" onPress={startStreaming} />
-                )}
-              </View>
-            </CameraView>
+          <CameraView
+            style={{flex: 1}}
+            ref={cameraRef}
+            mirror={false}
+          />
+
+          <View style={{position: 'absolute', bottom: 20, alignItems: 'center', width: '100%'}}>
+            {isStreaming ? (
+              <MainButton defaultWidth={320} type="danger" text="Прекратить трансляцию" onPress={stopStreaming} />
+            ) : (
+              <MainButton defaultWidth={320} type="standard" text="Начать трансляцию" onPress={startStreaming} />
+            )}
+          </View>
         </SafeAreaView>
       </View>
     </ProtectedRoute>
