@@ -197,7 +197,8 @@ def detect_carpet_coordinates(image_array: np.ndarray):
 
     return [
         {"x": round(float(box[0][0]) / width, 4), "y": round(float(box[0][1]) / height, 4)},  # Top-left
-        {"x": round(float(box[1][0]) / width, 4), "y": round(float(box[1][1]) / height, 4)},  # Bottom-left
         {"x": round(float(box[2][0]) / width, 4), "y": round(float(box[2][1]) / height, 4)},  # Bottom-right
-        {"x": round(float(box[3][0]) / width, 4), "y": round(float(box[3][1]) / height, 4)}  # Top-right
+        {"x": round(float(box[3][0]) / width, 4), "y": round(float(box[3][1]) / height, 4)},  # Top-right
+        {"x": round(float(box[1][0]) / width, 4), "y": round(float(box[1][1]) / height, 4)}  # Bottom-left
+
     ]
