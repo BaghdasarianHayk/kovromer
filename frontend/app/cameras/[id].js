@@ -95,7 +95,7 @@ export default function Cameras() {
         if (ws.current && ws.current.readyState === WebSocket.OPEN) {
           ws.current.send(photo.base64);
         }
-      }, 400);
+      }, 100);
     }
   };
 
