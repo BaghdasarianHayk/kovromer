@@ -1,5 +1,5 @@
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Button, Text, View, SafeAreaView } from 'react-native';
 import MainButton from '../../components/MainButton';
 import { useAuth } from '../../context/AuthContext';
@@ -37,6 +37,17 @@ export default function Cameras() {
       };
     }
   };
+
+  useEffect(() => {
+    return () => {
+      if (frameInterval.current) {
+        clearInterval(frameInterval.current);
+      }
+      if (ws.current) {
+        ws.current.close();
+      }
+    };
+  }, []);
 
   const stopStreaming = () => {
     if (ws.current) {
