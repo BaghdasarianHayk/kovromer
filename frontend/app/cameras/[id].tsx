@@ -10,11 +10,22 @@ export default function Cameras() {
   const [facing, setFacing] = useState<CameraType>('back');
   const [permission, requestPermission] = useCameraPermissions();
   const [isStreaming, setIsStreaming] = useState(false);
-  const cameraRef = useRef<CameraView | null>(null);
-  const ws = useRef<WebSocket | null>(null);
-  const frameInterval = useRef<NodeJS.Timeout | null>(null);
+  const cameraRef = useRef(null);
+  const ws = useRef(null);
+  const frameInterval = useRef(null);
   const { currentToken } = useAuth();
   const { id } = useLocalSearchParams()
+
+  useEffect(() => {
+    return () => {
+      if (frameInterval.current) {
+        clearInterval(frameInterval.current);
+      }
+      if (ws.current) {
+        ws.current.close();
+      }
+    };
+  }, []);
 
   const startStreaming = async () => {
     if (!ws.current || ws.current.readyState !== WebSocket.OPEN) {
@@ -37,17 +48,6 @@ export default function Cameras() {
       };
     }
   };
-
-  useEffect(() => {
-    return () => {
-      if (frameInterval.current) {
-        clearInterval(frameInterval.current);
-      }
-      if (ws.current) {
-        ws.current.close();
-      }
-    };
-  }, []);
 
   const stopStreaming = () => {
     if (ws.current) {
