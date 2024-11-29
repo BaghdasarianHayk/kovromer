@@ -1,7 +1,7 @@
 import base64
-from io import BytesIO
 from typing import List
-
+import cv2
+import numpy as np
 from sqlalchemy.future import select
 from app.cameras.models import Camera
 from app.cameras.schemas import CameraCreate, CameraBase, CameraCalibrate, ImageBase64
@@ -171,10 +171,6 @@ async def websocket_endpoint(websocket: WebSocket, token: str, camera_id: int):
     except HTTPException as e:
         await websocket.close(code=e.status_code)
         raise e
-
-import cv2
-import numpy as np
-
 
 def detect_carpet_coordinates(image_array: np.ndarray):
     """Detects carpet and returns normalized coordinates."""
