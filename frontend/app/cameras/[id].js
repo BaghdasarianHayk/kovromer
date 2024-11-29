@@ -86,16 +86,14 @@ export default function Cameras() {
       frameInterval.current = setInterval(async () => {
         const photo = await cameraRef.current.takePictureAsync({
           base64: true,
-          quality: 0.4,
+          quality: 0.5,
           exif: false,
           fastMode: true,
-          scale: 0.4
+          scale: 0.5
         });
 
-        if (ws.current && ws.current.readyState === WebSocket.OPEN) {
-          ws.current.send(photo.base64);
-        }
-      }, 100);
+        ws.current.send(photo.base64);
+      }, 1000);
     }
   };
 
