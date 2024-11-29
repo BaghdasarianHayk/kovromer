@@ -5,6 +5,7 @@ import { PanGestureHandler } from 'react-native-gesture-handler';
 import Svg, { Polygon } from 'react-native-svg';
 import { useAuth } from '../context/AuthContext';
 import MainButton from '../components/MainButton';
+import axios from 'axios';
 
 export default function Cameras() {
   const { serverImage } = useLocalSearchParams();
@@ -22,16 +23,37 @@ export default function Cameras() {
   const SafeAreaViewRef = useRef(null);
 
   useEffect(() => {
-    Image.getSize(
-      serverImage,
-      (width, height) => {
-        setServerImageDimensions({ width, height });
-      },
-      (error) => {
-        alert('Error fetching image dimensions:', error.toString());
+    const fetchImageData = async () => {
+      try {
+        Image.getSize(
+          serverImage,
+          (width, height) => {
+            setServerImageDimensions({ width, height });
+          },
+          (error) => {
+            alert('Error fetching image dimensions:', error.toString());
+          }
+        );
+
+        await detectCarpet(serverImage);  // Assuming serverImage is Base64 or a valid URL
+      } catch (error) {
+        console.error("Error in fetching image data:", error);
       }
-    );
+    };
+
+    fetchImageData();  // Call the async function inside useEffect
   }, [serverImage]);
+
+  async function detectCarpet(base64Image) {
+    try {
+      const response = await axios.post('https://ковромер.рф/api/cameras/detect_carpet', {
+        base64_image: base64Image
+      });
+      console.log(response.data);  // Handle the response from the API
+    } catch (error) {
+      console.error("Error detecting carpet:", error);
+    }
+  }
 
   getObjectArea = () => {
     if (

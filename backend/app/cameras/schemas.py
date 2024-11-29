@@ -12,3 +12,6 @@ class CameraCreate(BaseModel):
 
 class CameraCalibrate(BaseModel):
     ratio: float
+
+class ImageBase64(BaseModel):
+    base64_image: str

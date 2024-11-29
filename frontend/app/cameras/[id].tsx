@@ -45,8 +45,8 @@ export default function Cameras() {
     setIsStreaming(false);
 
     if (frameInterval.current) {
-      clearInterval(frameInterval.current); // Clear the interval
-      frameInterval.current = null; // Reset the interval reference
+      clearInterval(frameInterval.current);
+      frameInterval.current = null;
     }
     router.replace('/cameras')
   };
