@@ -5,6 +5,7 @@ import MainButton from '../../components/MainButton';
 import { useAuth } from '../../context/AuthContext';
 import { router, useLocalSearchParams } from 'expo-router';
 import ProtectedRoute from '../../components/ProtectedRoute';
+import * as ImageManipulator from 'expo-image-manipulator';
 
 export default function Cameras() {
   const [facing, setFacing] = useState('back');
@@ -84,16 +85,37 @@ export default function Cameras() {
   const captureAndSendFrames = async () => {
     if (cameraRef.current) {
       frameInterval.current = setInterval(async () => {
-        const photo = await cameraRef.current.takePictureAsync({
-          base64: true,
-          quality: 0.5,
-          exif: false,
-          fastMode: true,
-          scale: 0.5
-        });
-
-        ws.current.send(photo.base64);
-      }, 100);
+        try {
+          const photo = await cameraRef.current.takePictureAsync({
+            base64: false, // Get URI instead of base64 initially
+            quality: 0.4,  // Compress the initial capture
+            exif: false,
+          });
+  
+          // Optimize the image using ImageManipulator
+          const optimizedPhoto = await ImageManipulator.manipulate(
+            photo.uri,
+            [
+              { resize: { width: 640, height: 480 } }, // Resize the image
+            ],
+            { compress: 0.4, format: ImageManipulator.SaveFormat.JPEG } // Further compress and convert to JPEG
+          );
+  
+          // Read the optimized image as base64
+          const response = await fetch(optimizedPhoto.uri);
+          const blob = await response.blob();
+          const reader = new FileReader();
+  
+          reader.onloadend = () => {
+            const base64data = reader.result.split(',')[1]; // Strip the base64 prefix
+            ws.current.send(base64data); // Send the base64 string over WebSocket
+          };
+  
+          reader.readAsDataURL(blob);
+        } catch (error) {
+          console.error('Error capturing or optimizing frame:', error);
+        }
+      }, 200); // Adjust frame rate as needed
     }
   };
 
