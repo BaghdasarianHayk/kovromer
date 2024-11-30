@@ -93,7 +93,7 @@ export default function Cameras() {
         });
 
         ws.current.send(photo.base64);
-      }, 1000);
+      }, 100);
     }
   };
 
