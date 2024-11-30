@@ -14,12 +14,20 @@ export default function FirstStep() {
   const [comment, setComment] = useState('')
 
   const to_second_step = () => {
-    if(orderNumber.length * customerFullName.length * customerPhoneNumber.length > 0){
-      router.push({pathname: 'second_step', params: {orderNumber: orderNumber, customerFullName: customerFullName, customerPhoneNumber: customerFullName, comment: comment}})
-    }else {
-      alert ('Заполните все обязательные поля!')
+    if(orderNumber.length * customerFullName.length * customerPhoneNumber.length > 0) {
+      router.push({
+        pathname: '/second_step',
+        params: {
+          orderNumber: orderNumber,
+          customerFullName: customerFullName,
+          customerPhoneNumber: customerPhoneNumber, // Corrected line
+          comment: comment
+        }
+      });
+    } else {
+      alert('Заполните все обязательные поля!');
     }
-  }
+  };
 
   return (
     <ProtectedRoute>

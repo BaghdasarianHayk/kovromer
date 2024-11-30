@@ -5,7 +5,7 @@ import MainButton from '../components/MainButton';
 import { useAuth } from '../context/AuthContext';
 import ProtectedRoute from '../components/ProtectedRoute';
 
-export default function FirstStep() {
+export default function ThirdStep() {
   const [serverImage, setServerImage] = useState('https://media.istockphoto.com/id/1222249647/photo/creative-illustration.jpg?s=612x612&w=0&k=20&c=N6foEeJRoGSTl1LcN1RJ1aP_G3FhZ8aWku30iwtmT4A=');
   const ws = useRef(null);
   const { currentToken, selectedCamera } = useAuth();
