@@ -87,22 +87,14 @@ export default function Cameras() {
       frameInterval.current = setInterval(async () => {
         const photo = await cameraRef.current.takePictureAsync({
           base64: true,
-          quality: 0.5,
+          quality: 0.4,
           exif: false,
           fastMode: true,
-          scale: 0.5
+          scale: 0.4
         });
 
-        const optimizedPhoto = await manipulateAsync(
-          photo.base64,
-          [
-            { resize: { width: 640, height: 480 } }, // Resize the image
-          ],
-          { compress: 0.4, format: SaveFormat.JPEG, base64: true } // Further compress and convert to JPEG
-        );
-
-        ws.current.send(optimizedPhoto.base64);
-      }, 100);
+        ws.current.send(photo.base64);
+      }, 200);
     }
   };
 
