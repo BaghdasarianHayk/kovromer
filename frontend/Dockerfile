@@ -1,5 +1,7 @@
 FROM node:alpine as build
 
+RUN rm -rf dist
+
 COPY . .
 
 RUN npm install expo

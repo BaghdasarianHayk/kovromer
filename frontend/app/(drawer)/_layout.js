@@ -48,7 +48,7 @@ export default function Layout() {
             drawerStyle: {borderRadius: 0, borderBottomRightRadius: 0, borderTopRightRadius: 0},
             drawerItemStyle: {borderRadius: 8},
             drawerLabel: 'Новый заказ',
-            title: 'Шаг 1: Сделайте фото ковра',
+            title: 'Шаг 1: Введите данные заказа',
             drawerActiveBackgroundColor: 'rgba(0, 101, 253, 0.15)',
             drawerActiveTintColor: 'rgba(0, 101, 253, 1)',
             drawerInactiveTintColor: '#929292',

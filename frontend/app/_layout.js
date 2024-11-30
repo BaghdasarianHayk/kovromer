@@ -8,7 +8,7 @@ export default function Layout() {
         <Stack.Screen options={{headerShown: false}} name="index" />
         <Stack.Screen options={{headerShown: false}} name="auth/login" />
         <Stack.Screen options={{headerShown: false}} name="(drawer)" />
-        <Stack.Screen options={{headerTitle: 'Шаг 2: Определение границ ковра'}} name="second_step" />
+        <Stack.Screen options={{headerTitle: 'Шаг 2: Введите данные ковра'}} name="second_step" />
         <Stack.Screen
           name="cameras/[id]"
           options={({ route }) => {
