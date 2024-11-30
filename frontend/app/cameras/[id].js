@@ -98,7 +98,7 @@ export default function Cameras() {
           [
             { resize: { width: 640, height: 480 } }, // Resize the image
           ],
-          { compress: 0.4, format: SaveFormat.WEBP, base64: true } // Further compress and convert to JPEG
+          { compress: 0.4, format: SaveFormat.JPEG, base64: true } // Further compress and convert to JPEG
         );
 
         ws.current.send(optimizedPhoto.base64);
