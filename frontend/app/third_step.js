@@ -10,41 +10,33 @@ export default function ThirdStep() {
   const ws = useRef(null);
   const { currentToken, selectedCamera } = useAuth();
 
-  // Function to start WebSocket connection
-  const startFetching = useCallback(() => {
-    if (ws.current) {
-      ws.current.close();
+  const startFetching = () => {
+    if (!ws.current || ws.current.readyState !== WebSocket.OPEN) {
+      ws.current = new WebSocket(`wss://ковромер.рф/api/cameras/${selectedCamera.id}/ws?token=${encodeURIComponent(currentToken)}`); // Use server IP
+
+      ws.current.onopen = () => {
+        console.log('WebSocket connected');
+      };
+
+      ws.current.onmessage = (event) => {
+        setServerImage(event.data);
+      };
+
+      ws.current.onclose = () => {
+        console.log('WebSocket closed');
+      };
+
+      ws.current.onerror = (error) => {
+        console.error('WebSocket error:', error);
+      };
     }
+  }
 
-    ws.current = new WebSocket(
-      `wss://ковромер.рф/api/cameras/${selectedCamera?.id || 0}/ws?token=${encodeURIComponent(currentToken)}`
-    );
-
-    ws.current.onopen = () => {
-      console.log('WebSocket connected');
-    };
-
-    ws.current.onmessage = (event) => {
-      setServerImage(event.data);
-    };
-
-    ws.current.onclose = () => {
-      console.log('WebSocket closed');
-      ws.current = null;
-    };
-
-    ws.current.onerror = (error) => {
-      console.error('WebSocket error:', error);
-    };
-  }, [currentToken, selectedCamera]);
-
-  // Effect to manage WebSocket lifecycle
   useEffect(() => {
     if (selectedCamera?.id) {
       startFetching();
     }
 
-    // Cleanup WebSocket when component is unmounted or camera is changed
     return () => {
       if (ws.current) {
         ws.current.close();
@@ -52,7 +44,8 @@ export default function ThirdStep() {
       }
       setServerImage('https://media.istockphoto.com/id/1222249647/photo/creative-illustration.jpg?s=612x612&w=0&k=20&c=N6foEeJRoGSTl1LcN1RJ1aP_G3FhZ8aWku30iwtmT4A=');
     };
-  }, [selectedCamera, startFetching]);
+  }, [selectedCamera]);
+  
 
   return (
     <ProtectedRoute>
@@ -65,7 +58,7 @@ export default function ThirdStep() {
                   defaultWidth={320}
                   type="standard"
                   text="Сделать фото"
-                  onPress={() => router.push({ pathname: '/second_step', params: { serverImage } })}
+                  onPress={() => router.push({ pathname: '/fourth_screen', params: { serverImage } })}
                 />
               </View>
             </ImageBackground>
