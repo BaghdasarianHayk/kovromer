@@ -15,7 +15,7 @@ export default function FirstStep() {
 
   const to_second_step = () => {
     if(orderNumber.length * customerFullName.length * customerPhoneNumber.length > 0){
-      router.push({href: '/second_step', params: {orderNumber: orderNumber, customerFullName: customerFullName, customerPhoneNumber: customerFullName, comment: comment}})
+      router.push({pathname: '/second_step', params: {orderNumber: orderNumber, customerFullName: customerFullName, customerPhoneNumber: customerFullName, comment: comment}})
     }else {
       alert ('Заполните все обязательные поля!')
     }
