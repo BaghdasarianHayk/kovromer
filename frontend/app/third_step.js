@@ -58,7 +58,7 @@ export default function ThirdStep() {
                   defaultWidth={320}
                   type="standard"
                   text="Сделать фото"
-                  onPress={() => router.push({ pathname: '/fourth_screen', params: { serverImage } })}
+                  onPress={() => router.push({ pathname: '/fourth_step', params: { serverImage } })}
                 />
               </View>
             </ImageBackground>

@@ -7,7 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import MainButton from '../components/MainButton';
 import axios from 'axios';
 
-export default function Cameras() {
+export default function FourthScreen() {
   const { serverImage } = useLocalSearchParams();
   const { selectedCamera } = useAuth();
   const [serverImageDimensions, setServerImageDimensions] = useState({ width: 0, height: 0 });
