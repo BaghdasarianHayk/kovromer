@@ -17,8 +17,6 @@ export default function Cameras() {
   const { id } = useLocalSearchParams()
 
   useEffect(() => {
-    requestPermission();
-
     return () => {
       if (frameInterval.current) {
         clearInterval(frameInterval.current);
@@ -30,7 +28,10 @@ export default function Cameras() {
   }, []);
 
   if (!permission) {
-    return <View />;
+    <View style={{flex: 1, backgroundColor: 'white'}}>
+      <Text>We need your permission to show the camera</Text>
+      <Button onPress={requestPermission} title="grant permission" />
+    </View>
   }
 
   if (!permission.granted) {
