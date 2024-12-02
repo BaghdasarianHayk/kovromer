@@ -1,4 +1,4 @@
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState, useRef, useEffect } from 'react';
 import { View, SafeAreaView, ImageBackground, PanResponder, Image } from 'react-native';
 import { PanGestureHandler } from 'react-native-gesture-handler';
@@ -8,15 +8,17 @@ import MainButton from '../components/MainButton';
 import axios from 'axios';
 
 export default function FourthScreen() {
-  const { serverImage } = useLocalSearchParams();
+  const params = useLocalSearchParams();
+  const serverImage = params.serverImage
+
   const { selectedCamera } = useAuth();
   const [serverImageDimensions, setServerImageDimensions] = useState({ width: 0, height: 0 });
   const [safeAreaDimensions, setSafeAreaDimensions] = useState({ width: 0, height: 0 });
   const [dotPositions, setDotPositions] = useState([
     { x: 0.2, y: 0.2 },
-    { x: 0.2, y: 0.8 },
-    { x: 0.8, y: 0.8 },
     { x: 0.8, y: 0.2 },
+    { x: 0.8, y: 0.8 },
+    { x: 0.2, y: 0.8 },
   ]);
 
   const imageRef = useRef(null);
@@ -80,6 +82,36 @@ export default function FourthScreen() {
       setSafeAreaDimensions({ width, height });
     });
   };
+
+  const calculateDistance = (dot1, dot2) => {
+    return Math.sqrt(Math.pow(dot2.x - dot1.x, 2) + Math.pow(dot2.y - dot1.y, 2));
+  };
+
+  function sizeRound(num) {
+    const lastDigit = num % 10;
+    if (lastDigit >= 5) {
+      return Math.ceil(num / 10) * 10;
+    } else {
+      return Math.floor(num / 10) * 10;
+    }
+  }
+
+  const to_fifth_step = () => {
+    const realDotPositions = dotPositions.map((dot) => ({
+      x: dot.x * serverImageDimensions.width,
+      y: dot.y * serverImageDimensions.height,
+    }));
+
+    const width1 = calculateDistance(realDotPositions[0], realDotPositions[1]);
+    const width2 = calculateDistance(realDotPositions[2], realDotPositions[3]);
+    const length1 = calculateDistance(realDotPositions[0], realDotPositions[3]);
+    const length2 = calculateDistance(realDotPositions[1], realDotPositions[2]);
+
+    const mainWidth = ((width1 + width2) / 2)/Math.sqrt(selectedCamera?.ratio);
+    const mainLength = ((length1 + length2) / 2)/Math.sqrt(selectedCamera?.ratio);
+
+    router.push({pathname: 'fifth_step', params: {dotPositions: JSON.stringify(realDotPositions), width: sizeRound(mainWidth), length: sizeRound(mainLength), ...params}})
+  }
 
   const getContainStyle = () => {
     const { width: safeWidth, height: safeHeight } = safeAreaDimensions;
@@ -170,7 +202,7 @@ export default function FourthScreen() {
                   width: 20,
                   height: 20,
                   borderRadius: 10,
-                  backgroundColor: 'rgba(0,101,253,1)',
+                  backgroundColor: index == 0 ? 'red' : index == 1 ? 'green' : index == 2 ? 'blue' : 'yellow',
                   left: dot.x * (containStyle.width || 1) - 10,
                   top: dot.y * (containStyle.height || 1) - 10,
                 }}
@@ -179,7 +211,7 @@ export default function FourthScreen() {
           ))}
         </ImageBackground>
         <View style={{ position: 'absolute', alignItems: 'center', bottom: 20, width: '100%' }}>
-          <MainButton text="Далее" onPress={getObjectArea} type="standard" defaultWidth={320} />
+          <MainButton text="Далее" onPress={to_fifth_step} type="standard" defaultWidth={320} />
         </View>
       </SafeAreaView>
     </View>

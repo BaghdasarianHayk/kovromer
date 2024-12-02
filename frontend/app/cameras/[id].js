@@ -5,7 +5,6 @@ import MainButton from '../../components/MainButton';
 import { useAuth } from '../../context/AuthContext';
 import { router, useLocalSearchParams } from 'expo-router';
 import ProtectedRoute from '../../components/ProtectedRoute';
-import { manipulateAsync, FlipType, SaveFormat } from 'expo-image-manipulator';
 
 export default function Cameras() {
   const [facing, setFacing] = useState('back');

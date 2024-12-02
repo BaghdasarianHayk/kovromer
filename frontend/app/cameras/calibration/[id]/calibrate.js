@@ -24,58 +24,83 @@ export default function Calibrate() {
     const SafeAreaViewRef = useRef(null);
   
     useEffect(() => {
-      Image.getSize(
-        serverImage,
-        (width, height) => {
-          setServerImageDimensions({ width, height });
-        },
-        (error) => {
-          alert('Error fetching image dimensions:', error.toString());
+      const fetchImageData = async () => {
+        try {
+          Image.getSize(
+            serverImage,
+            (width, height) => {
+              setServerImageDimensions({ width, height });
+            },
+            (error) => {
+              alert('Error fetching image dimensions:', error.toString());
+            }
+          );
+  
+          await detectCarpet(serverImage);  // Assuming serverImage is Base64 or a valid URL
+        } catch (error) {
+          console.error("Error in fetching image data:", error);
         }
-      );
+      };
+  
+      fetchImageData();  // Call the async function inside useEffect
     }, [serverImage]);
 
-    const updateCameraRatio = async () => {
-        if (
-            serverImageDimensions.width > 0 &&
-            serverImageDimensions.height > 0 &&
-            dotPositions.length > 0
-          ) {
+    async function detectCarpet(base64Image) {
+      try {
+        const response = await axios.post('https://ковромер.рф/api/cameras/detect_carpet', {
+          base64_image: base64Image
+        });
+        console.log(response.data);  // Handle the response from the API
+        if(response.data){
+          setDotPositions(response.data)
+        }
+      } catch (error) {
+        console.error("Error detecting carpet:", error);
+      }
+    }
 
-            const realDotPositions = dotPositions.map((dot) => ({
+    const updateCameraRatio = async () => {
+      if (
+          serverImageDimensions.width > 0 &&
+          serverImageDimensions.height > 0 &&
+          dotPositions.length > 0
+      ) {
+          const realDotPositions = dotPositions.map((dot) => ({
               x: dot.x * serverImageDimensions.width,
               y: dot.y * serverImageDimensions.height,
-            }));
-      
-
-            const area = calculateArea(realDotPositions);
-            console.log(`Calculated Area: ${area} px²`); // Convert to cm² if needed
-    
-            try {
-                const response = await axios.patch(
-                    `https://ковромер.рф/api/cameras/${selectedCamera?.id}`, // URL with cameraId
-                    null, // No body in the request
-                    {
-                      params: {
-                        ratio: area / 10000, // Send ratio as a query parameter
-                      },
+          }));
+  
+          const area = calculateArea(realDotPositions);
+          console.log(`Calculated Area: ${area} px²`);
+  
+          try {
+              const response = await axios.patch(
+                  `https://xn--b1agnjibnd.xn--p1ai/api/cameras/${selectedCamera?.id}`,
+                  {
+                      ratio: area / 10000,
+                  },
+                  {
                       headers: {
-                        Authorization: `Bearer ${currentToken}`, // Authorization header with Bearer token
-                        'Content-Type': 'application/json', // Ensure content type is JSON
+                          Authorization: `Bearer ${currentToken}`,
+                          'Content-Type': 'application/json',
                       },
-                    }
-                  );
-            
-                if (response.status === 200) {
-                    setSelectedCamera(response.data.camera);
-                    router.replace('/first_step')
-                }
-            } catch (error) {
-                alert('Error updating camera:', error.response?.data.toString() || error.message.toString());
-                throw error;
-            }
-        }
+                  }
+              );
+  
+              if (response.status === 200) {
+                  setSelectedCamera(response.data);
+                  router.replace('/first_step');
+              }
+          } catch (error) {
+              alert(
+                  'Error updating camera: ' +
+                  (error.response?.data.toString() || error.message.toString())
+              );
+              throw error;
+          }
+      }
     };
+  
   
     const onLayout = () => {
       SafeAreaViewRef.current.measure((x, y, width, height) => {

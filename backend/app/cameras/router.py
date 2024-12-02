@@ -72,7 +72,7 @@ async def calibrate_camera( worker: current_worker, data: CameraCalibrate, camer
             if not camera_db:
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,
-                    detail=f"Камера с ID {camera_db} не найдена."
+                    detail=f"Камера с ID {camera_id} не найдена."
                 )
 
             camera_db.ratio = data.ratio

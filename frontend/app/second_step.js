@@ -5,12 +5,14 @@ import Svg, { Path } from "react-native-svg";
 import { useState } from "react";
 import CheckBox from "../components/CheckBox";
 import MainButton from "../components/MainButton";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 
 export default function SecondStep(){
   const [carpetNumber, setCarpetNumber] = useState('')
   const [selectedType, setSelectedType] = useState({})
   const [selectedAdditionalServices, setSelectedAdditionalServices] = useState([])
+
+  const {orderNumber, customerFullName, customerPhoneNumber, comment} = useLocalSearchParams()
 
   const types = [
     {name: 'Длинный'},
@@ -27,19 +29,22 @@ export default function SecondStep(){
   const vw = useWindowDimensions().width
 
   const to_third_step = () => {
-    // if(orderNumber.length * customerFullName.length * customerPhoneNumber.length > 0) {
+    if(carpetNumber.length > 0 && selectedType.name) {
       router.push({
         pathname: '/third_step',
         params: {
-          // orderNumber: orderNumber,
-          // customerFullName: customerFullName,
-          // customerPhoneNumber: customerPhoneNumber,
-          // comment: comment
+          orderNumber: orderNumber,
+          customerFullName: customerFullName,
+          customerPhoneNumber: customerPhoneNumber,
+          comment: comment,
+          carpetNumber: carpetNumber,
+          selectedType: JSON.stringify(selectedType),
+          selectedAdditionalServices: JSON.stringify(selectedAdditionalServices)
         }
       });
-    // } else {
-    //   alert('Заполните все обязательные поля!');
-    // }
+    } else {
+      alert('Заполните все обязательные поля!');
+    }
   };
 
   return(
