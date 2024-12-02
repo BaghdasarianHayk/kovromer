@@ -34,7 +34,7 @@ export default function Cameras() {
     </View>
   }
 
-  if (!permission.granted) {
+  if (!permission?.granted) {
     return (
       <View style={{flex: 1, backgroundColor: 'white'}}>
         <Text>We need your permission to show the camera</Text>
