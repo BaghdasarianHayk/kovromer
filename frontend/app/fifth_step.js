@@ -61,8 +61,8 @@ export default function FifthStep(){
                         <MainTextInput 
                         value={length}
                         onChangeText={setLength}
-                        label="Высота"
-                        placeholder="Высота"
+                        label="Длина"
+                        placeholder="Длина"
                         width={320}
                         SvgIcon={() => (
                             <Svg width="20" height="20" viewBox="0 0 20 20" fill="none">

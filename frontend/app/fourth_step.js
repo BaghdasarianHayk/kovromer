@@ -176,7 +176,7 @@ export default function FourthScreen() {
       <SafeAreaView ref={SafeAreaViewRef} onLayout={onLayout} style={{ flex: 1 }}>
         <ImageBackground
           ref={imageRef}
-          style={[{ backgroundColor: 'red', alignSelf: 'center' }, containStyle]}
+          style={[{ alignSelf: 'center' }, containStyle]}
           source={{ uri: serverImage }}
         >
           <Svg style={{ position: 'absolute', width: '100%', height: '100%' }}>
@@ -202,7 +202,7 @@ export default function FourthScreen() {
                   width: 20,
                   height: 20,
                   borderRadius: 10,
-                  backgroundColor: index == 0 ? 'red' : index == 1 ? 'green' : index == 2 ? 'blue' : 'yellow',
+                  backgroundColor: 'rgba(0,101,253,1)',
                   left: dot.x * (containStyle.width || 1) - 10,
                   top: dot.y * (containStyle.height || 1) - 10,
                 }}
